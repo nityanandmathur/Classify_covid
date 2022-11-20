@@ -24,7 +24,6 @@
     "extensions": [
         "ms-python.python",
         "GitHub.vscode-pull-request-github",
-        "Iterative.dvc",
-        "ms-azuretools.vscode-docker"
+        "Iterative.dvc"
     ]
 }
