@@ -1,0 +1,30 @@
+name: tensorflow
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  # Core packages
+  - tensorflow-gpu
+  # BASICS
+  - numpy
+  - pandas
+  - tqdm
+  - ipython
+  # VISUALIZATION
+  - matplotlib
+  # add here only pip-packages that are not available in conda/conda-forge!
+  # - pip:
+    #  - -e .  # local utility package
+     
+  # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
+  - jupyterlab
+  - pytest
+  - pytest-cov
+  - tox
+  - pre_commit
+  - nbdime
+  - nbstripout
+  - sphinx
+  - recommonmark

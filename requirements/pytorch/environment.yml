@@ -1,0 +1,36 @@
+name: pytorch
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+  - nvidia
+dependencies:
+  - python=3.9
+  - pip
+  # Core packages
+  - pytorch 
+  - pytorch-cuda=11.6
+  # - torchvision 
+  # - torchaudio 
+  # BASICS
+  - numpy
+  - pandas
+  - tqdm
+  - ipython
+  - ipykernel
+  # VISUALIZATION
+  - matplotlib
+  # add here only pip-packages that are not available in conda/conda-forge!
+  # - pip:
+    #  - -e .  # install git checkout of classify_covid in editable mode
+
+  # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
+  - jupyterlab
+  - pytest
+  - pytest-cov
+  - tox
+  - pre_commit
+  - nbdime
+  - nbstripout
+  - sphinx
+  - recommonmark
