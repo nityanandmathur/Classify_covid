@@ -1,4 +1,5 @@
-FROM nvidia/cuda:11.6.0-base-ubuntu20.04
+FROM nvidia/cuda:11.6.0-runtime-ubuntu20.04
+
 RUN apt-get update && apt-get -y upgrade
 RUN export DEBIAN_FRONTEND=noninteractive   
 RUN apt-get -y install git
@@ -14,5 +15,5 @@ RUN wget \
     && bash Miniconda3-latest-Linux-x86_64.sh -b \
     && rm -f Miniconda3-latest-Linux-x86_64.sh 
     
-
+RUN conda install -c conda-forge jupyterlab -y
 RUN conda --version
