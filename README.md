@@ -1,5 +1,5 @@
-[![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
 <!-- These are examples of badges you might also want to add to your README. Update the URLs accordingly.
+[![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
 [![Built Status](https://api.cirrus-ci.com/github/<USER>/classify_covid.svg?branch=main)](https://cirrus-ci.com/github/<USER>/classify_covid)
 [![ReadTheDocs](https://readthedocs.org/projects/classify_covid/badge/?version=latest)](https://classify_covid.readthedocs.io/en/stable/)
 [![Coveralls](https://img.shields.io/coveralls/github/<USER>/classify_covid/main.svg)](https://coveralls.io/r/<USER>/classify_covid)
@@ -9,23 +9,38 @@
 [![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter)](https://twitter.com/classify_covid)
 -->
 
-# classify_covid
+# Covid Classification for Mobile Inference
 
-> Add a short description here!
+> This repository contains code for modelling, integrations, tests, and documentation for covid classification
 
-A longer description of your project goes here...
+## VSCode Setup
+
+In order to set up the necessary container:
+
+1. Setup Github with SSH and Install Docker Desktop like mentioned in ML-Team-Guidelines
+2. clone this repository and open the repo folder insider vscode
+   ```bash
+   keyboard command : left CTRL + Shift + P
+   Type: ">Dev Containers: Rebuild Container"
+   ```
 
 ## Installation
 
 In order to set up the necessary environment:
 
 1. review and uncomment what you need in `environment.yml` and create an environment `classify_covid` with the help of [conda]:
-   ```
-   conda env create -f environment.yml
+   ```bash
+   conda env create -f requirements/<framework>/environment.yml
+   e.g. conda env create -f requirements/tensorflow/environment.yml
    ```
 2. activate the new environment with:
+   ```bash
+   conda activate <framework>
+   e.g. conda activate tensorflow
    ```
-   conda activate classify_covid
+   ```bash
+   python -m ipykernel install --user --name=<framework>
+   e.g. python -m ipykernel install --user --name=tensorflow
    ```
 
 > **_NOTE:_**  The conda environment will have classify_covid installed in editable mode.
@@ -42,13 +57,26 @@ Optional and needed only once after `git clone`:
    and checkout the configuration under `.pre-commit-config.yaml`.
    The `-n, --no-verify` flag of `git commit` can be used to deactivate pre-commit hooks temporarily.
 
+4. to run tests manually you can use below function
+
+   ```bash
+   pre-commit run --all-files
+   # we suggest to use this regularly in order to avoid errors
+   ```
+
+5. to start jupyterlab, you can use below command
+   ```bash
+   jupyter lab --no-browser --port=8890 --allow-root --ip='0.0.0.0' --NotebookApp.token='' --NotebookApp.password=''
+   # In order to open jupyterlab, you can go to ports > globe icon beside local address link
+   ```
+
+<!--
 4. install [nbstripout] git hooks to remove the output cells of committed notebooks with:
    ```bash
    nbstripout --install --attributes notebooks/.gitattributes
    ```
    This is useful to avoid large diffs due to plots in your notebooks.
    A simple `nbstripout --uninstall` will revert these changes.
-
 
 Then take a look into the `scripts` and `notebooks` folders.
 
@@ -66,6 +94,8 @@ Then take a look into the `scripts` and `notebooks` folders.
    ```bash
    conda env update -f environment.lock.yml --prune
    ```
+-->
+
 ## Project Organization
 
 ```
@@ -76,11 +106,17 @@ Then take a look into the `scripts` and `notebooks` folders.
 ├── LICENSE.txt             <- License as chosen on the command-line.
 ├── README.md               <- The top-level README for developers.
 ├── configs                 <- Directory for configurations of model & application.
+├── requirements
+│   ├── tensorflow          <- contains tensorflow environment and requirements
+│   │   └── environment.yml 
+│   └── pytorch             <- contains pytorch environment and requirements
+│       └── environment.yml 
 ├── data
 │   ├── external            <- Data from third party sources.
 │   ├── interim             <- Intermediate data that has been transformed.
 │   ├── processed           <- The final, canonical data sets for modeling.
 │   └── raw                 <- The original, immutable data dump.
+│
 ├── docs                    <- Directory for Sphinx documentation in rst or md.
 ├── environment.yml         <- The conda environment file for reproducibility.
 ├── models                  <- Trained and serialized models, model predictions,
