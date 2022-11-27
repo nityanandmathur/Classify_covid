@@ -1,0 +1,13 @@
+params:
+  batch_size: 32
+  learning_rate: 0.001
+  training_epoch: 3
+
+data:
+  data_dir: "/workspaces/classify_covid/data"
+  covid: "/workspaces/classify_covid/data/raw/COVID/images"
+  normal: "/workspaces/classify_covid/data/raw/Normal/images"
+  viral: "/workspaces/classify_covid/data/raw/Viral Pneumonia/images"
+
+model:
+  save: "/workspaces/classify_covid/models/covid.h5"

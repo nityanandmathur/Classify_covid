@@ -1,0 +1,10 @@
+stages:
+  train:
+    cmd: python scripts/train_model.py --config=config.yaml
+    deps:
+    - scripts/preprocessing.py
+    - scripts/model.py
+    params: 
+    - configs/config.yaml:
+    outs:
+    - models/covid.h5

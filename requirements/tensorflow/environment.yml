@@ -15,8 +15,12 @@ dependencies:
   # VISUALIZATION
   - matplotlib
   # add here only pip-packages that are not available in conda/conda-forge!
-  # - pip:
-    #  - -e .  # local utility package
+  - pip:
+    - -e .  # local utility package
+    - dvc[all]
+    - wandb
+    - hydra-core
+    - scikit-learn
      
   # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
   - jupyterlab
