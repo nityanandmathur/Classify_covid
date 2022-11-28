@@ -21,6 +21,7 @@ dependencies:
     - wandb
     - hydra-core
     - scikit-learn
+    - pillow
      
   # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
   - jupyterlab

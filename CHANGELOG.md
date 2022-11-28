@@ -53,5 +53,3 @@ dvc stage add -n train -p configs/config.yaml -o models/covid.h5 scripts/train_m
 # not added -d data/raw, since data is not cached. For training in server add: -d data/raw
 ```
 9. Added `model.py` & `preprocessing.py` to _dvc.yaml: deps_
-
-10.
