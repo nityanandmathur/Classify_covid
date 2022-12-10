@@ -1,17 +1,20 @@
 import os
+import random
 
 import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
-def create_df(filenames, c, p, n):
+def create_df(c, p, n): 
+  random.seed(42)
+  filenames = os.listdir(c) + random.sample(os.listdir(n), 5000) + os.listdir(p)
   categories = []
   for filename in filenames:
     category = filename.split('-')[0]
-    if category == 'COVID':
+    if category == '/workspaces/classify_covid/data/raw/COVID/images/COVID':
       categories.append(str(2))
-    elif category == 'Viral Pneumonia':
+    elif category == '/workspaces/classify_covid/data/raw/Viral Pneumonia/images/Viral Pneumonia':
       categories.append(str(1))
     else:
       categories.append(str(0))
@@ -29,7 +32,8 @@ def create_df(filenames, c, p, n):
     'filename': filenames,
     'category': categories
   })
-  return df
+  df.to_csv(path_or_buf='/workspaces/classify_covid/data/raw/df_csv.csv', sep=',', index=False)
+  # return df
 
 def train_generator(train_data):
     train_data_gen = ImageDataGenerator(

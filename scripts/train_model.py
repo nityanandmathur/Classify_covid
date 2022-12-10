@@ -21,7 +21,7 @@ import wandb
 def train(config_name: Text) -> None:
     # set the random seeds
 
-    os.environ['TF_CUDNN_DETERMINISTIC'] = '2'
+    # os.environ['TF_CUDNN_DETERMINISTIC'] = '2'
     random.seed(hash("setting random seeds") % 2**32 - 1)   #to control randomness
     np.random.seed(hash("improves reproductibility") % 2**32 - 1) #to make it reproducable as possible
     tf.random.set_seed(hash("by removing stochasticity") % 2**32 - 1)
@@ -38,10 +38,14 @@ def train(config_name: Text) -> None:
     n = cfg.data.normal
     p = cfg.data.viral
 
-    random.seed(42)
-    filenames = os.listdir(c) + random.sample(os.listdir(n), 5000) + os.listdir(p)
+    path='/workspaces/classify_covid/data/raw/df_csv.csv'
 
-    df= create_df(filenames, c, p, n)
+    if not os.path.exists(path): create_df(c, p, n)
+
+    df= pd.read_csv(path, sep=',',index_col=False)
+    df = df.astype(str)
+    # print(df)
+    # print(df.dtypes)
 
     #train_test_split
     train_data, test_valid_data = train_test_split(df, test_size=0.2, random_state = 42, shuffle=True, stratify=df['category'])
