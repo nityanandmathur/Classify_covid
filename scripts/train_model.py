@@ -1,45 +1,87 @@
-#!/usr/bin/env python
-import logging
-import sys
-from pathlib import Path
+import argparse
+import os
+import random
+from typing import Text
 
-import click
-from IPython.core import ultratb
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import wandb.keras
+from hydra import compose, initialize
+from model import get_Model
+from omegaconf import OmegaConf
+from PIL import Image
+from preprocessing import create_df, train_generator, val_test_generator
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.optimizers import Adam
 
-import classify_covid
-
-# fallback to debugger on error
-sys.excepthook = ultratb.FormattedTB(mode="Verbose", color_scheme="Linux", call_pdb=1)
-# turn UserWarning messages to errors to find the actual cause
-# import warnings
-# warnings.simplefilter("error")
-
-_logger = logging.getLogger(__name__)
+import wandb
 
 
-@click.command()
-@click.option(
-    "-c",
-    "--config",
-    "cfg_path",
-    required=True,
-    type=click.Path(exists=True),
-    help="path to config file",
-)
-@click.option("--quiet", "log_level", flag_value=logging.WARNING, default=True)
-@click.option("-v", "--verbose", "log_level", flag_value=logging.INFO)
-@click.option("-vv", "--very-verbose", "log_level", flag_value=logging.DEBUG)
-@click.version_option(classify_covid.__version__)
-def main(cfg_path: Path, log_level: int):
-    logging.basicConfig(
-        stream=sys.stdout,
-        level=log_level,
-        datefmt="%Y-%m-%d %H:%M",
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
-    # YOUR CODE GOES HERE! Keep the main functionality in src/classify_covid
-    # est = classify_covid.models.Estimator()
+def train(config_name: Text) -> None:
+    # set the random seeds
 
+    # os.environ['TF_CUDNN_DETERMINISTIC'] = '2'
+    random.seed(hash("setting random seeds") % 2**32 - 1)   #to control randomness
+    np.random.seed(hash("improves reproductibility") % 2**32 - 1) #to make it reproducable as possible
+    tf.random.set_seed(hash("by removing stochasticity") % 2**32 - 1)
+
+
+    initialize(version_base=None, config_path="../configs")
+    cfg=compose(config_name=config_name)
+    print(OmegaConf.to_yaml(cfg))
+
+    wandb.init(project="classify_covid", config=cfg)
+
+    #data
+    c = cfg.data.covid
+    n = cfg.data.normal
+    p = cfg.data.viral
+
+    path='/workspaces/classify_covid/data/raw/df_csv.csv'
+
+    if not os.path.exists(path): create_df(c, p, n)
+
+    df= pd.read_csv(path, sep=',',index_col=False)
+    df = df.astype(str)
+    # print(df)
+    # print(df.dtypes)
+
+    #train_test_split
+    train_data, test_valid_data = train_test_split(df, test_size=0.2, random_state = 42, shuffle=True, stratify=df['category'])
+    train_data = train_data.reset_index(drop=True)
+
+    test_valid_data = test_valid_data.reset_index(drop=True)
+
+    test_data, valid_data = train_test_split(test_valid_data, test_size=0.5, random_state = 42,
+                                             shuffle=True, stratify=test_valid_data['category'])
+    test_data = test_data.reset_index(drop=True)
+    valid_data = valid_data.reset_index(drop=True)
+
+    #data_augmentation
+    train_gen = train_generator(train_data)
+    valid_gen = val_test_generator(valid_data)
+    test_gen = val_test_generator(test_data)
+
+    model = get_Model(freeze=True)
+    # loss=cfg.params.loss
+    #lr=0.01
+
+    lr = cfg.params.learning_rate
+    epoch_num=cfg.params.training_epoch
+    model.compile(optimizer=Adam(learning_rate=lr), metrics=["accuracy"], loss='categorical_crossentropy')
+
+    history = model.fit(train_gen,
+                        validation_data=valid_gen,
+                        verbose=1,
+                        epochs=epoch_num,
+                        callbacks=[wandb.keras.WandbCallback()])
+    
+    model.save(cfg.model.save)
 
 if __name__ == "__main__":
-    main()
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument('--config', dest='config', required=True)
+    args = argparser.parse_args()
+
+    train(config_name=args.config)
